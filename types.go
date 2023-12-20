@@ -1,6 +1,11 @@
 package scotch
 
-import "log"
+import (
+	"log"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/prateekjoshi2013/scotch/render"
+)
 
 type initPaths struct {
 	rootPath    string
@@ -14,7 +19,9 @@ type Scotch struct {
 	ErrorLog *log.Logger
 	InfoLog  *log.Logger
 	RootPath string
-	config config // private scotch framework config
+	Routes   *chi.Mux
+	Render   *render.Render
+	config   config // private scotch framework config
 }
 
 type config struct {
