@@ -48,8 +48,17 @@ func (s *Scotch) New(rootPath string) error {
 	s.ErrorLog = errorLog
 	s.Debug = s.Debug || os.Getenv("DEBUG") == "true"
 
+	s.config = config{
+		port:     os.Getenv("PORT"),
+		renderer: os.Getenv("RENDERER"),
+	}
+
 	// set version
 	s.Version = VERSION
+
+	// set root path
+	s.RootPath = rootPath
+
 	return nil
 }
 

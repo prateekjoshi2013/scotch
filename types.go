@@ -14,4 +14,10 @@ type Scotch struct {
 	ErrorLog *log.Logger
 	InfoLog  *log.Logger
 	RootPath string
+	config config // private scotch framework config
+}
+
+type config struct {
+	port     string
+	renderer string
 }
