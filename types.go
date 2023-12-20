@@ -3,6 +3,7 @@ package scotch
 import (
 	"log"
 
+	"github.com/CloudyKit/jet/v6"
 	"github.com/go-chi/chi/v5"
 	"github.com/prateekjoshi2013/scotch/render"
 )
@@ -21,6 +22,7 @@ type Scotch struct {
 	RootPath string
 	Routes   *chi.Mux
 	Render   *render.Render
+	JetViews *jet.Set
 	config   config // private scotch framework config
 }
 

@@ -3,8 +3,11 @@ package render
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strings"
+
+	"github.com/CloudyKit/jet/v6"
 )
 
 func (s *Render) Page(w http.ResponseWriter, r *http.Request, view string, variables, data interface{}) error {
@@ -12,6 +15,7 @@ func (s *Render) Page(w http.ResponseWriter, r *http.Request, view string, varia
 	case "go":
 		return s.GoPage(w, r, view, variables, data)
 	case "jet":
+		return s.JetPage(w, r, view, variables, data)
 	}
 	return nil
 }
@@ -27,6 +31,29 @@ func (s *Render) GoPage(w http.ResponseWriter, r *http.Request, view string, var
 	}
 	err = tmpl.Execute(w, &td)
 	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Render) JetPage(w http.ResponseWriter, r *http.Request, view string, variables, data interface{}) error {
+	var vars jet.VarMap
+	if variables != nil {
+		vars = variables.(jet.VarMap)
+		} else {
+		vars = make(jet.VarMap)
+	}
+
+	td := &TemplateData{}
+	if data != nil {
+		td = data.(*TemplateData)
+	}
+	t, err := s.JetViews.GetTemplate(fmt.Sprintf("%s.jet", view))
+	if err != nil {
+		return err
+	}
+	if err = t.Execute(w, vars, td); err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil

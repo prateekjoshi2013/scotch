@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/CloudyKit/jet/v6"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 	"github.com/prateekjoshi2013/scotch/render"
@@ -66,9 +67,16 @@ func (s *Scotch) New(rootPath string) error {
 	// create routes
 	s.Routes = s.routes().(*chi.Mux)
 
+	views := jet.NewSet(
+		jet.NewOSFileSystemLoader(fmt.Sprintf("%s/views", s.RootPath)),
+		jet.InDevelopmentMode(),
+	)
+
+	s.JetViews = views
+
 	// create render engine
 	s.CreateRenderer()
-	
+
 	return nil
 }
 
@@ -121,6 +129,7 @@ func (s *Scotch) CreateRenderer() {
 		Renderer: s.config.renderer,
 		RootPath: s.RootPath,
 		Port:     s.config.port,
+		JetViews: s.JetViews,
 	}
 	s.Render = &renderer
 }
