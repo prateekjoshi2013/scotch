@@ -1,5 +1,11 @@
 package scotch
 
+import (
+	"fmt"
+
+	"github.com/joho/godotenv"
+)
+
 const VERSION = "1.0.0"
 
 func (s *Scotch) New(rootPath string) error {
@@ -21,6 +27,19 @@ func (s *Scotch) New(rootPath string) error {
 	if err != nil {
 		return err
 	}
+
+	err = s.checkDotEnv(rootPath)
+	if err != nil {
+		return err
+	}
+
+	// read .env
+
+	err = godotenv.Load(rootPath + "/.env")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -32,6 +51,14 @@ func (s *Scotch) Init(p initPaths) error {
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (s *Scotch) checkDotEnv(path string) error {
+	err := s.CreateFileIfNotExist(fmt.Sprintf("%s/.env", path))
+	if err != nil {
+		return err
 	}
 	return nil
 }
