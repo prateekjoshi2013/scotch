@@ -2,6 +2,8 @@ package scotch
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -40,6 +42,14 @@ func (s *Scotch) New(rootPath string) error {
 		return err
 	}
 
+	// create loggers
+	infoLog, errorLog := s.startLoggers()
+	s.InfoLog = infoLog
+	s.ErrorLog = errorLog
+	s.Debug = s.Debug || os.Getenv("DEBUG") == "true"
+
+	// set version
+	s.Version = VERSION
 	return nil
 }
 
@@ -61,4 +71,13 @@ func (s *Scotch) checkDotEnv(path string) error {
 		return err
 	}
 	return nil
+}
+
+func (s *Scotch) startLoggers() (*log.Logger, *log.Logger) {
+	var infoLog *log.Logger
+	var errorLog *log.Logger
+
+	infoLog = log.New(os.Stdout, "INFO: \t", log.Ldate|log.Ltime|log.Lshortfile)
+	errorLog = log.New(os.Stderr, "ERROR: \t", log.Ldate|log.Ltime|log.Lshortfile)
+	return infoLog, errorLog
 }
