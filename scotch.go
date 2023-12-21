@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 	"github.com/prateekjoshi2013/scotch/render"
+	"github.com/prateekjoshi2013/scotch/session"
 )
 
 const VERSION = "1.0.0"
@@ -56,7 +57,27 @@ func (s *Scotch) New(rootPath string) error {
 	s.config = config{
 		port:     os.Getenv("PORT"),
 		renderer: os.Getenv("RENDERER"),
+		cookie: cookieConfig{
+			name:     os.Getenv("COOKIE_NAME"),
+			lifetime: os.Getenv("COOKIE_LIFETIME"),
+			persist:  os.Getenv("COOKIE_PERSIST"),
+			secure:   os.Getenv("COOKIE_SECURE"),
+			domain:   os.Getenv("COOKIE_DOMAIN"),
+		},
+		sessionType: os.Getenv("SESSION_TYPE"),
 	}
+
+	// create session manager
+	mySession := session.Session{
+		CookieLifetime: s.config.cookie.lifetime,
+		CookiePersist:  s.config.cookie.persist,
+		CookieName:     s.config.cookie.name,
+		CookieDomain:   s.config.cookie.domain,
+		SessionType:    s.config.sessionType,
+		CookieSecure:   s.config.cookie.secure,
+	}
+
+	s.Session = mySession.InitSession()
 
 	// set version
 	s.Version = VERSION
