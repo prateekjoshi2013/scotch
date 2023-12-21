@@ -16,8 +16,9 @@ func (s *Render) Page(w http.ResponseWriter, r *http.Request, view string, varia
 		return s.GoPage(w, r, view, variables, data)
 	case "jet":
 		return s.JetPage(w, r, view, variables, data)
+	default:
+		return fmt.Errorf("unsupported renderer: %s", s.Renderer)
 	}
-	return nil
 }
 
 func (s *Render) GoPage(w http.ResponseWriter, r *http.Request, view string, variables, data interface{}) error {
