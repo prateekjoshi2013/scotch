@@ -54,6 +54,19 @@ func (s *Scotch) New(rootPath string) error {
 	s.ErrorLog = errorLog
 	s.Debug = s.Debug || os.Getenv("DEBUG") == "true"
 
+	// connect to database
+	if os.Getenv("DATABASE_TYPE") != "" {
+		db, err := s.OpenDB(os.Getenv("DATABASE_TYPE"), s.BuildDSN())
+		if err != nil {
+			errorLog.Println(err)
+			os.Exit(1)
+		}
+		s.DB = Database{
+			DatabaseType: os.Getenv("DATABASE_TYPE"),
+			Pool:         db,
+		}
+	}
+
 	s.config = config{
 		port:     os.Getenv("PORT"),
 		renderer: os.Getenv("RENDERER"),
@@ -65,6 +78,10 @@ func (s *Scotch) New(rootPath string) error {
 			domain:   os.Getenv("COOKIE_DOMAIN"),
 		},
 		sessionType: os.Getenv("SESSION_TYPE"),
+		database: databaseConfig{
+			dsn:      s.BuildDSN(),
+			database: os.Getenv("DATABASE_TYPE"),
+		},
 	}
 
 	// create session manager
@@ -140,6 +157,8 @@ func (s *Scotch) ListenAndServe() {
 		WriteTimeout: 600 * time.Second,
 	}
 
+	defer s.DB.Pool.Close()
+
 	s.InfoLog.Printf("Listening on port %s", s.config.port)
 	err := srv.ListenAndServe()
 	s.ErrorLog.Fatal(err)
@@ -153,4 +172,23 @@ func (s *Scotch) CreateRenderer() {
 		JetViews: s.JetViews,
 	}
 	s.Render = &renderer
+}
+
+func (s *Scotch) BuildDSN() string {
+	var dsn string
+	switch os.Getenv("DATABASE_TYPE") {
+	case "postgres":
+		dsn = fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s timezone=UTC connect_timeout=10",
+			os.Getenv("DATABASE_HOST"),
+			os.Getenv("DATABASE_PORT"),
+			os.Getenv("DATABASE_USER"),
+			os.Getenv("DATABASE_NAME"),
+			os.Getenv("DATABASE_SSL_MODE"),
+		)
+		if os.Getenv("DATABASE_PASS") != "" {
+			dsn = fmt.Sprintf("%s password=%s", dsn, os.Getenv("DATABASE_PASS"))
+		}
+	default:
+	}
+	return dsn
 }

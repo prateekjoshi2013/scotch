@@ -1,6 +1,7 @@
 package scotch
 
 import (
+	"database/sql"
 	"log"
 
 	"github.com/CloudyKit/jet/v6"
@@ -25,6 +26,7 @@ type Scotch struct {
 	Render   *render.Render
 	JetViews *jet.Set
 	Session  *scs.SessionManager
+	DB       Database
 	config   config // private scotch framework config
 }
 
@@ -33,6 +35,7 @@ type config struct {
 	renderer    string
 	cookie      cookieConfig
 	sessionType string
+	database    databaseConfig
 }
 
 type cookieConfig struct {
@@ -41,4 +44,14 @@ type cookieConfig struct {
 	persist  string // whether the cookie should be persisted across requests (between browser sessions)
 	secure   string // whether the cookie should be sent with encryoption
 	domain   string
+}
+
+type databaseConfig struct {
+	dsn      string
+	database string
+}
+
+type Database struct {
+	DatabaseType string
+	Pool         *sql.DB
 }
