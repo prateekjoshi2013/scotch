@@ -170,6 +170,7 @@ func (s *Scotch) CreateRenderer() {
 		RootPath: s.RootPath,
 		Port:     s.config.port,
 		JetViews: s.JetViews,
+		Session:  s.Session,
 	}
 	s.Render = &renderer
 }

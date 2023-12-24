@@ -10,6 +10,16 @@ import (
 	"github.com/CloudyKit/jet/v6"
 )
 
+func (s *Render) defaultTemplateData(td *TemplateData, r *http.Request) *TemplateData {
+	td.Secure = s.Secure
+	td.ServerName = s.ServerName
+	td.Port = s.Port
+	if s.Session.Exists(r.Context(), "userID") {
+		td.IsAuthenticated = true
+	}
+	return td
+}
+
 func (s *Render) Page(w http.ResponseWriter, r *http.Request, view string, variables, data interface{}) error {
 	switch strings.ToLower(s.Renderer) {
 	case "go":
@@ -41,7 +51,7 @@ func (s *Render) JetPage(w http.ResponseWriter, r *http.Request, view string, va
 	var vars jet.VarMap
 	if variables != nil {
 		vars = variables.(jet.VarMap)
-		} else {
+	} else {
 		vars = make(jet.VarMap)
 	}
 
@@ -49,6 +59,9 @@ func (s *Render) JetPage(w http.ResponseWriter, r *http.Request, view string, va
 	if data != nil {
 		td = data.(*TemplateData)
 	}
+
+	td = s.defaultTemplateData(td, r)
+
 	t, err := s.JetViews.GetTemplate(fmt.Sprintf("%s.jet", view))
 	if err != nil {
 		return err
