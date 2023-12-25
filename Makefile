@@ -11,3 +11,6 @@ cover:
 coverage:
 	@go test -cover ./...
 	
+## build_cli: builds the command line tool scotch and copies it to scotch-app
+build_cli:
+	@go build -o ../myapp/scotch ./cmd/cli
