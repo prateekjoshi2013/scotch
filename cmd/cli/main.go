@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"log"
 	"os"
 
 	"github.com/fatih/color"
@@ -14,11 +13,12 @@ const Version = "1.0.0"
 var sco scotch.Scotch
 
 func main() {
+	var message string
 	arg1, arg2, arg3, err := validateInput()
 	if err != nil {
 		exitGraceFully(err)
 	}
-	
+
 	setup()
 
 	switch arg1 {
@@ -26,6 +26,15 @@ func main() {
 		showHelp()
 	case "version":
 		color.Yellow("Application version: %s\n", Version)
+	case "migrate":
+		if arg2 == "" {
+			arg2 = "up"
+		}
+		err = doMigrate(arg2, arg3)
+		if err != nil {
+			exitGraceFully(err)
+		}
+		message = "Migration completed successfully"
 	case "make":
 		if arg2 == "" {
 			exitGraceFully(errors.New("make requires a subcommand: (migration | model |handler)"))
@@ -35,9 +44,9 @@ func main() {
 			exitGraceFully(err)
 		}
 	default:
-		log.Println(arg2, arg3)
+		showHelp()
 	}
-
+	exitGraceFully(nil, message)
 }
 
 func validateInput() (string, string, string, error) {
@@ -63,13 +72,7 @@ func validateInput() (string, string, string, error) {
 	return arg1, arg2, arg3, nil
 }
 
-func showHelp() {
-	color.Yellow(`
-	Available commands:
-	help		- Show this help
-	version		- Show version
-	`)
-}
+
 
 func exitGraceFully(err error, msg ...string) {
 	message := ""
