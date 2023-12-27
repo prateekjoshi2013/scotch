@@ -4,7 +4,7 @@ go 1.21.5
 
 require (
 	github.com/CloudyKit/jet/v6 v6.2.0
-	github.com/alexedwards/scs v1.4.1
+	github.com/alexedwards/scs/mysqlstore v0.0.0-20231113091146-cef4b05350c8
 	github.com/alexedwards/scs/postgresstore v0.0.0-20231113091146-cef4b05350c8
 	github.com/alexedwards/scs/v2 v2.7.0
 	github.com/fatih/color v1.16.0
