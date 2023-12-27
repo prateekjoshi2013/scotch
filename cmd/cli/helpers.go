@@ -68,5 +68,6 @@ func showHelp() {
 	make auth    - Creates models, migrations, tables for auth system
 	make handler <name>    - Creates new handler with the given name in handlers directory
 	make model <name>    - Creates new model with the given name in data directory
+	make session 	- Creates a table for session storage
 	`)
 }
