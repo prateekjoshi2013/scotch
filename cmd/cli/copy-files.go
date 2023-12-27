@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"errors"
 	"os"
 )
 
@@ -9,7 +10,9 @@ import (
 var templateFS embed.FS
 
 func copyFileFromTemplate(src, dst string) error {
-	// TODO check to ensure file does not already exist
+	if fileExists(dst) {
+		return errors.New("file already exists: " + dst)
+	}
 	data, err := templateFS.ReadFile(src)
 	if err != nil {
 		return err
@@ -27,4 +30,11 @@ func copyDataToFile(data []byte, dst string) error {
 		return err
 	}
 	return nil
+}
+
+func fileExists(fileToCheck string) bool {
+	if _, err := os.Stat(fileToCheck); os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
