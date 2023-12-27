@@ -66,5 +66,6 @@ func showHelp() {
 	migrate reset	- runs all down migrations in reverse order, and then all up migrations
 	make migation <name>	- Creates new migration up and down with the given name
 	make auth    - Creates models, migrations, tables for auth system
+	make handler <name>    - Creates new handler with the given name
 	`)
 }
