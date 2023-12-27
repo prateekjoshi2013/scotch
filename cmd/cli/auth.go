@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 func doAuth() error {
@@ -30,7 +32,7 @@ func doAuth() error {
 	if err != nil {
 		exitGraceFully(err)
 	}
-	// copy files over
+	// copy files over from migration templates
 	err = copyFileFromTemplate("templates/data/user.go.txt", sco.RootPath+"/data/user.go")
 	if err != nil {
 		exitGraceFully(err)
@@ -39,5 +41,20 @@ func doAuth() error {
 	if err != nil {
 		exitGraceFully(err)
 	}
+	// copy files over from middleware templates
+	err = copyFileFromTemplate("templates/middlewares/auth.go.txt", sco.RootPath+"/middlewares/auth.go")
+	if err != nil {
+		exitGraceFully(err)
+	}
+	err = copyFileFromTemplate("templates/middlewares/auth-token.go.txt", sco.RootPath+"/middlewares/auth-token.go")
+	if err != nil {
+		exitGraceFully(err)
+	}
+	color.Yellow(" - users, tokens and remember_tokens migrations created and executed")
+	color.Yellow(" - users and token models created")
+	color.Yellow(" - auth middleware created")
+	color.Yellow("")
+	color.Yellow("Don't forget to add user and token models to the data/models.go, and to add appropriate middleware to your routes!")
+
 	return nil
 }
