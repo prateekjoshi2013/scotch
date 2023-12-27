@@ -24,7 +24,7 @@ func doSessionTable() error {
 	if err != nil {
 		return err
 	}
-	err = copyDataToFile([]byte("drop table sessions"), downFile)
+	err = copyDataToFile([]byte("drop table sessions;"), downFile)
 	if err != nil {
 		exitGraceFully(err)
 	}

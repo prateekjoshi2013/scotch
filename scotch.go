@@ -92,6 +92,7 @@ func (s *Scotch) New(rootPath string) error {
 		CookieDomain:   s.config.cookie.domain,
 		SessionType:    s.config.sessionType,
 		CookieSecure:   s.config.cookie.secure,
+		DBPool:         s.DB.Pool,
 	}
 
 	s.Session = mySession.InitSession()
